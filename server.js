@@ -5,6 +5,7 @@ const colors=require('colors')
 const morgan=require('morgan')
 const logger=require('./middleware/logger.js')
 const connectBd =require('./config/db')
+const errorHandler=require('./middleware/error.js')
 
 // load .env variables
 dotenv.config({path:'./config/config.env'})
@@ -20,6 +21,7 @@ if(process.env.NODE_ENV === 'development'){
 }
 app.use(express.json() )
 app.use('/api/v1/bootcamps',route)
+app.use(errorHandler)
 const server=app.listen(port,()=>console.log(`connected to ${process.env.NODE_ENV}the port`,port.yellow.bold))
 
 // @descr here i handle the unhandled promise rejection
