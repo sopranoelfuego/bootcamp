@@ -1,0 +1,14 @@
+[{
+    "name": "Admin Account",
+    "email": "admin@gmail.com",
+    "role": "user",
+    "password": "123456"
+},
+{
+    "name": "Publisher Account",
+    "email": "publisher@gmail.com",
+    "role": "publisher",
+    "password": "123456"
+},
+
+]

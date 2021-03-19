@@ -1,0 +1,19 @@
+[{
+    "_id": "5d725a4a7b292f5f8ceff789",
+    "title": "Front End Web Development",
+    "description": "This course will provide you with all of the essentials to become a successful frontend web developer. You will learn to master HTML, CSS and front end JavaScript, along with tools like Git, VSCode and front end frameworks like Vue",
+    "weeks": 8,
+    "tuition": 8000,
+    "minimumSkill": "beginner",
+    "scholarshipsAvailable": true
+},
+{
+    "_id": "5d725c84c4ded7bcb480eaa0",
+    "title": "Full Stack Web Development",
+    "description": "In this course you will learn full stack web development, first learning all about the frontend with HTML/CSS/JS/Vue and then the backend with Node.js/Express/MongoDB",
+    "weeks": 12,
+    "tuition": 10000,
+    "minimumSkill": "intermediate",
+    "scholarshipsAvailable": true
+}
+]
