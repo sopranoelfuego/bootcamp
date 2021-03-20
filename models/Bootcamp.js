@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
+const slug=require('slugify')
 
-
+const geocoder=require('../utils/geocoder.js')
 
 const Bootcamp=new mongoose.Schema({
      
@@ -48,14 +49,15 @@ const Bootcamp=new mongoose.Schema({
           type: [Number],
         //   required: true,
           index:"2dsphere"
-        }
-      },
-      formattedAddres:String,
+        },
+      
+      formattedAddress:String,
       street:String,
       city:String,
       state:String,
       zipcode:String,
       country:String,
+    },
       careers:{
           type:[String],
           required:true,
@@ -103,6 +105,28 @@ const Bootcamp=new mongoose.Schema({
           default:Date.now
       }
 
+})
+// @decr this methode will update the slug witch is the acronym of the bootcamp name
+Bootcamp.pre('save',function(next){
+    this.slug=slug(this.name,{lower:true})
+    next()
+})
+Bootcamp.pre('save',async function (next){
+    let locat= await geocoder.geocode(this.address)
+    this.location={
+        type:'Point',
+        coordinates:[locat[0].longitude,locat[0].latitude],
+        formattedAddress:locat[0].formattedAddress,
+        street:locat[0].streetName,
+        city:locat[0].city,
+        state:locat[0].state,
+        zipcode:locat[0].zipcode,
+        country:locat[0].countryCode,
+    }
+    // @desc as we have the full address info we can ommit to save the address data field 
+    this.address=undefined
+
+    next()
 })
 
 

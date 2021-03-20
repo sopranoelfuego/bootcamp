@@ -5,12 +5,15 @@ const router=express.Router()
     getBootcamp,
     updateBootcamp,
     deleteBootcamp,
-    createBootcamp}=require('../controllers/bootcamps')
+    createBootcamp,
+    deleteAllCamps
+}=require('../controllers/bootcamps')
 
 
 router.route('/')
     .get(getBootcamps)
     .post(createBootcamp)
+    .delete(deleteAllCamps)
 router.route('/:id')
      .get(getBootcamp)
      .put(updateBootcamp)
