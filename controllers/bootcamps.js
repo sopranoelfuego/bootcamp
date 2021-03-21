@@ -45,11 +45,18 @@ const getBootcamps=ansyncHandler(async(req,res,next)=>{
 
 //    }
   //  @descr then we execute the query
-  const execut=await query
+  
+  if(req.query.select){
+      const fields=req.query.select.split(',').join(' ')
+      console.log(fields)
+      query=query.select(fields)
+  }
 
+  const execut=await query
+  
   if(execut.length>0){
       res.status(200).json({success:true,count:execut.length,data:execut})
-  }else res.status(404).json({success:false,err:"not Bootcamp founded"})
+  }else res.status(404).json({success:false,data:[]})
 
 
 
