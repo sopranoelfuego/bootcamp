@@ -55,17 +55,17 @@ const getBootcamps=ansyncHandler(async(req,res,next)=>{
     //   PAGINATION
     const page=parseInt(req.query.page,10) || 1
     const limit=parseInt(req.query.limit,10) || 100
-    const startEndex=(page -1)* limit
+    const startIndex=(page -1)* limit
     const endIndex=page * limit
     const totalDoc=await Bootcamp.countDocuments()
     query=query.skip(startIndex).limit(limit)
 
-     
+     console.log("page:",page,"limit:",limit,"startIndex:",startIndex,"endIndex:",endIndex,"total:",totalDoc)
 
     const execut=await query
-    
+    // PAGINATION result
     let pagination={}
-    if(endEndex < totalDoc){
+    if(endIndex < totalDoc){
         pagination.next={
             page:page+1,
             limit
@@ -80,7 +80,7 @@ const getBootcamps=ansyncHandler(async(req,res,next)=>{
             limit
         }
     }
-    res.status(200).json({success:true,count:execut.length,paginatoin,data:execut})
+    res.status(200).json({success:true,count:execut.length,pagination,data:execut})
 
 
 

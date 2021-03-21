@@ -11,7 +11,8 @@ const errorHandler=require('./middleware/error.js')
 dotenv.config({path:'./config/config.env'})
 
 connectBd()
-const route=require('./routes/bootcamps.js')
+const bootcampRoute=require('./routes/bootcamps.js')
+const courseRoute=require('./routes/courses.js')
 const port = process.env.PORT || 5000
 
 //@descr here we use morgan in devlpment 
@@ -19,8 +20,9 @@ const port = process.env.PORT || 5000
 if(process.env.NODE_ENV === 'development'){
    app.use(morgan('dev'))
 }
-app.use(express.json() )
-app.use('/api/v1/bootcamps',route)
+app.use(express.json())
+app.use('/api/v1/bootcamps',bootcampRoute)
+app.use('/api/v1/courses',courseRoute)
 app.use(errorHandler)
 const server=app.listen(port,()=>console.log(`connected to ${process.env.NODE_ENV}the port`,port.yellow.bold))
 

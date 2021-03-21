@@ -1,0 +1,24 @@
+[
+    {
+        "_id":"6056eb1789e40a1d4835u2s8",
+        "title":"Front End Web Development",
+        "description":"In this course you will learn full stack web development, first learning all about the frontend with HTML/CSS/JS/Vue and then the backend with Node.js/Express/MongoDB",
+        "weeks":8,
+        "tuition":8000,
+        "minimumSkill":"beginer",
+        "scholarshipAvailable":true,
+        "bootcamp":"6056eb1789e40a1d48350b98",
+        "user":"5d7a514b5d2c12d7439be045"
+    },
+    {
+        "_id":"6056eb1779e40a1d4535u2s8",
+        "title":"Front End Web Development",
+        "description":"In this course you will learn full stack web development, first learning all about the frontend with HTML/CSS/JS/Vue and then the backend with Node.js/Express/MongoDB",
+        "weeks":10,
+        "tuition":7000,
+        "minimumSkill":"intermediate",
+        "scholarshipAvailable":true,
+        "bootcamp":"6056eb1789e40a1d48350b98",
+        "user":"6056eb1789e40a1d48350b98"
+    }
+]
