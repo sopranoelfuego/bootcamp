@@ -13,8 +13,9 @@ const getBootcamps=ansyncHandler(async(req,res,next)=>{
 //    copy the request.query
     const cpQuery={...req.query}
     
-    // @desc fields to remove
-    const removeFields=['select']
+    // @desc this means that we have to remove the subquery in advanced
+    // 
+    const removeFields=['select','sort','page','limit']
     
     // @desc loop over  removFields and delete them from cpquery
     removeFields.forEach(match => delete cpQuery[match])
@@ -25,38 +26,61 @@ const getBootcamps=ansyncHandler(async(req,res,next)=>{
     // @desc means that we attached a $ sign to the operator
     queryString=queryString.replace(/\b(gt|gte|lt|lte|in)\b/g,match => `$${match}`)
     /** */
-    // @decr then get back to the json format and use it to query in database
-
-    // @desc get the data from backend
-    console.log("this is query in json",queryString)
-    query=Bootcamp.find(JSON.parse(queryString))
-
-//    if(req.query.select){
-//     //    @desc as the syntax of select is the following // include a and b, exclude other fields
-//     // query.select('a b');
-
-//     // @descr find ressources
-//         const allData=Bootcamp.find(JSON.parse(queryString))
-    
-//        console.log(req.query.select)
-//        const fields=req.query.select.split(',').join(' ')
-//        console.log(newQuery)
-//        allData=allData.select(fields)
-
-//    }
-  //  @descr then we execute the query
+    // @decr then we get back to the json format and use it to query in database
+//  @desc  this is the oroginal query http://localhost/v1/bootcamps? which one we distract to get subqueries
+  query=Bootcamp.find(JSON.parse(queryString))
   
+
+//   @desc here is the case when the original query has
+// as subquery select like http://localhost/v1/bootcamps?select=name,description
   if(req.query.select){
+    //   here we get  ["name","description"] in req.query.select which we gonna distructure in fields var
       const fields=req.query.select.split(',').join(' ')
       console.log(fields)
+    //   output is name description
       query=query.select(fields)
   }
 
-  const execut=await query
-  
-  if(execut.length>0){
-      res.status(200).json({success:true,count:execut.length,data:execut})
-  }else res.status(404).json({success:false,data:[]})
+
+
+//   @descr SORTING
+
+  if(req.query.sort){
+    //   her is the same like above
+      const sortBy=req.query.sort.split(',').join(' ')
+      query=query.sort(sortBy)
+    }else {
+        query=query.sort('-createdAt')
+    }
+    //   PAGINATION
+    const page=parseInt(req.query.page,10) || 1
+    const limit=parseInt(req.query.limit,10) || 100
+    const startEndex=(page -1)* limit
+    const endIndex=page * limit
+    const totalDoc=await Bootcamp.countDocuments()
+    query=query.skip(startIndex).limit(limit)
+
+     
+
+    const execut=await query
+    
+    let pagination={}
+    if(endEndex < totalDoc){
+        pagination.next={
+            page:page+1,
+            limit
+        }
+        
+    }
+     
+    if(startIndex>0){
+
+        pagination.prev={
+            page:page-1,
+            limit
+        }
+    }
+    res.status(200).json({success:true,count:execut.length,paginatoin,data:execut})
 
 
 
