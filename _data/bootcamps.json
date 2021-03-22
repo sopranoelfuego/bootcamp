@@ -11,7 +11,7 @@
         "UI/UX",
         "Business"
     ],
-    "averageCost":10000,
+    
     "housing": true,
     "jobAssistance": true,
     "jobGuarantee": false,
@@ -30,7 +30,7 @@
         "UI/UX",
         "Mobile Developement"
     ],
-    "averageCost":20000,
+    
 
     "housing": false,
     "jobAssistance": true,

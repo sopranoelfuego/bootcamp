@@ -105,6 +105,9 @@ const Bootcamp=new mongoose.Schema({
           default:Date.now
       }
 
+},{
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
 })
 // @decr this methode will update the slug witch is the acronym of the bootcamp name
 Bootcamp.pre('save',function(next){
@@ -129,5 +132,20 @@ Bootcamp.pre('save',async function (next){
     next()
 })
 
+// @desc reverse the populate which will populate all the data from courses
+// where there is bootcamp in course
+Bootcamp.virtual('courses',{
+    ref:'Course',
+    localField:"_id",
+    foreignField:'bootcamp',
+    justOne:false
+})
+// @descr HERE WE SPECIFY THAT IF THE BOOTCAMP IS REMOVED THEN IS SUITABL WITH IT COURSES CORRESPONDANCES
+Bootcamp.pre('remove',async function(next) {
+
+    await this.model('Course').deleteMany({bootcamp:this._id})
+    next()
+    
+})
 
 module.exports =mongoose.model('Bootcamp',Bootcamp)
