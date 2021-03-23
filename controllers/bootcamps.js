@@ -101,23 +101,33 @@ const getBootcamp=ansyncHandler(async(req,res,next)=>{
              const newBootcamp= await Bootcamp.findById(req.params.id)
              if(!newBootcamp){
                  return next(new ErrorResponse('not bootcamp with such id',404))
-           }
-           res.status(200).json({
-               success:true,
-                data:newBootcamp
-           })
- 
-        
-
- }
-)
-
-// @desc create new bootcamp
-// @route post api/v1/bootcamps
+                }
+                res.status(200).json({
+                    success:true,
+                    data:newBootcamp
+                })
+                
+                
+                
+            }
+            )
+            
+            // @desc create new bootcamp
+            // @route post api/v1/bootcamps
 // @access private
-    const createBootcamp=ansyncHandler(async(req,res,next)=>{
-       
-        const newBootcamp=await Bootcamp.create(req.body)
+const createBootcamp=ansyncHandler(async(req,res,next)=>{
+    //    as we pass through protect to initiate the req.user then we can get the user
+    req.body.user=req.user.id
+    // check for the publishedBootcamp 
+    const publishedBootcamp=await Bootcamp.findOne({user:req.user.id})
+    //   we have to be sure that users without role admin should add one bootcamp
+    
+    if(publishedBootcamp && req.user.role != 'admin'){
+        
+        return next(new ErrorResponse(`USER WITH ID ${req.user.id} has already published`,400))
+        
+    }
+    const newBootcamp=await Bootcamp.create(req.body)
         
         if(!newBootcamp)
         {
@@ -137,20 +147,39 @@ const updateBootcamp=ansyncHandler(async(req,res,next)=>{
     const {id:_id}=req.params
    if(mongoose.Types.ObjectId.isValid(id)){
 
-       const updatedBootcamp= await Bootcamp.findByIdAndUpdate({_id},req.body,{new:true,runValidators:true})
-       res.status(200).json({success:true,data:updatedBootcamp})
+            let updatedBootcamp= await Bootcamp.findById(req.params.id)
+            
+            if(!updatedBootcamp){
+
+                return next(new ErrorResponse('bootcamp not found ..',404))
+            }
+
+            //   make sure the one who want to update it is the owner
+            if(updatedBootcamp.user.toString() !== req.user.id && req.user.role!=='admin'){
+                
+                return next(new ErrorResponse('IT SHOULD BE UPDATED BY THE OWNER',401))
+            }
+             updatedBootcamp= await Bootcamp.findByIdAndUpdate({_id},req.body,{new:true,runValidators:true})
+      
+            res.status(200).json({success:true,data:updatedBootcamp})
    }else {
-   return next(new ErrorResponse('id is not found in the comment',404))
+       return next(new ErrorResponse('id is not valid',404))
    }
 
 })
 const deleteBootcamp=ansyncHandler(async(req,res,next)=>{
-    const {id:_id}=req.params
-    let deletSuccess= await Bootcamp.findById(_id)
+    
+    let deletSuccess= await Bootcamp.findById(req.params.id)
     
     if(!deletSuccess){
         return next(new ErrorResponse('id not found ',404))
     }
+    // check if is the owner of the bootcamp
+    if(deletSuccess.user.toString() !== req.user.id && req.user.role!=='admin'){
+                
+        return next(new ErrorResponse('IT SHOULD BE DELETEED BY THE OWNER',401))
+    }
+
     deletSuccess.remove()
     res.status(200).json({success:true,data:{message:"success deleted.."}})
 
@@ -159,7 +188,16 @@ const deleteBootcamp=ansyncHandler(async(req,res,next)=>{
 // @route delete api/v1/bootcamps:id
 // @access private
 const deleteAllCamps=ansyncHandler(async(req,res,next)=>{
-   const deleteOne= await Bootcamp.remove({})
+
+    //   check if is the owner
+    if( req.user.role != 'admin'){
+        
+        return next(new ErrorResponse(`USER WITH ID ${req.user.id} IS NOT AUTORIZED`,400))
+        
+    }
+    
+    const deleteOne= await Bootcamp.remove({})
+     
     if(deleteOne){
         res.status(200).json({success:true,data:{message:"succeful deleted.."}})
     }
@@ -197,7 +235,7 @@ const getBootcampRadius=ansyncHandler(async(req,res,next)=>{
 const bootcampUploadPhoto=ansyncHandler(async(req,res,next)=>{
   
   const bootcamp=await Bootcamp.findById(req.params.id)
-  console.log("the whole requestr object".blue,req.files)
+
     if (!bootcamp) {
         return next(new ErrorResponse('id is not found in the comment',404))
     }
@@ -205,6 +243,13 @@ const bootcampUploadPhoto=ansyncHandler(async(req,res,next)=>{
         return next(new ErrorResponse('please choose file',400))
         
     }
+    //   check if is the owner
+    if(bootcamp.user.id.toString !==req.user.id && req.user.role != 'admin'){
+        
+        return next(new ErrorResponse(`USER WITH ID ${req.user.id} IS NOT AUTORIZED`,400))
+        
+    }
+   
     //  then we make sure if the file bring is a photo 
     let file=req.files.file
     if(!file.mimetype.startsWith('image')){

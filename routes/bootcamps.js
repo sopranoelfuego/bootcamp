@@ -12,6 +12,7 @@ const advancedResult=require('../middleware/advancedResult.js')
     getBootcampRadius,
     bootcampUploadPhoto
 }=require('../controllers/bootcamps')
+const {protect,autorize}=require('../middleware/auth.js')
 const { route } = require('./courses.js')
 
 // here we re-router to attached a course at each bootcamp
@@ -20,15 +21,15 @@ router.use('/:bootcampId/courses',createCourse)
 
 router.route('/')
     .get(advancedResult(Bootcamp,'courses'), getBootcamps)
-    .post(createBootcamp)
-    .delete(deleteAllCamps)
+    .post(protect,autorize('publisher','admin'),createBootcamp)
+    .delete(protect,autorize('publisher','admin'),deleteAllCamps)
 router.route('/:id')
      .get(getBootcamp)
-     .put(updateBootcamp)
-     .delete(deleteBootcamp)
+     .put(protect,autorize('publisher','admin'),updateBootcamp)
+     .delete(protect,autorize('publisher','admin'),deleteBootcamp)
 router.route('/radius/:zipCode/:distance')
      .post(getBootcampRadius)
 
 router.route('/:id/photo')
-     .put(bootcampUploadPhoto)
+     .put(protect,autorize('publisher','admin'), bootcampUploadPhoto)
 module.exports =router

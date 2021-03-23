@@ -4,7 +4,7 @@ const {getCourses,createCourse,getCourse,updateCourse,deleteCourse,deleteAllCour
 const router=express.Router({mergeParams:true})
 const Cours=require('../models/Course.js')
 const advancedResult=require('../middleware/advancedResult.js')
-
+const {protect,autorize}=require('../middleware/auth.js')
 
 router.route('/')
       .get(advancedResult({
@@ -12,12 +12,12 @@ router.route('/')
             select:'name description'
         }),getCourses)
       
-      .delete(deleteAllCourses)
+      .delete(protect,autorize('publisher','admin'),deleteAllCourses)
 router.route('/:id')
       .get(getCourse)
-      .put(updateCourse)
-      .delete(deleteCourse)
-      .post(createCourse)
+      .put(protect,autorize('publisher','admin'),updateCourse)
+      .delete(protect,autorize('publisher','admin'),deleteCourse)
+      .post(protect,autorize('publisher','admin'),createCourse)
 
 
 module.exports=router

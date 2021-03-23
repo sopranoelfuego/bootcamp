@@ -8,11 +8,13 @@ const logger=require('./middleware/logger.js')
 const connectBd =require('./config/db')
 const errorHandler=require('./middleware/error.js')
 const fileupload=require('express-fileupload')
+const cookieParser=require('cookie-parser')
 
 // load .env variables
 dotenv.config({path:'./config/config.env'})
 
 connectBd()
+
 const bootcampRoute=require('./routes/bootcamps.js')
 const courseRoute=require('./routes/courses.js')
 const port = process.env.PORT || 5000
@@ -26,6 +28,7 @@ if(process.env.NODE_ENV === 'development'){
 app.use(express.static(path.join(__dirname,'public')))
 app.use(fileupload())
 app.use(express.json())
+app.use(cookieParser())
 app.use('/api/v1/bootcamps',bootcampRoute)
 app.use('/api/v1/courses',courseRoute)
 app.use('/api/v1/auth',authRoute)
