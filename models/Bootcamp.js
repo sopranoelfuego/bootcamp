@@ -147,7 +147,7 @@ Bootcamp.virtual('courses',{
     foreignField:'bootcamp',
     justOne:false
 })
-// @descr HERE WE SPECIFY THAT IF THE BOOTCAMP IS REMOVED THEN IS SUITABL WITH IT COURSES CORRESPONDANCES
+// @descr HERE WE SPECIFYTHAT IF THE BOOTCAMP IS REMOVED THEN IS SUITABL WITH IT COURSES CORRESPONDANCES
 Bootcamp.pre('remove',async function(next) {
 
     await this.model('Course').deleteMany({bootcamp:this._id})

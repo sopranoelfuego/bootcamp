@@ -71,12 +71,16 @@ const login=ansyncHandler(async (req,res,next)=>{
  // @access private
  const getMe=ansyncHandler(async(req,res,next)=>{
      console.log("this is the user",req.user)
+     
+    //  remember here that req.user is a object {id} which means re
      const user=await User.findById(req.user.id)
+    
      if(!user){
          return next(new ErrorResponse('user undefinied',404))
       }
       res.status(200).json({success:true,data:user})
-})
+}
+)
 
 
 
@@ -114,6 +118,7 @@ const updatePassword = ansyncHandler(async (req, res, next) => {
     await user.save();
   
     sendTokenToResponse(user, 200, res);
+
   });
 
 // @desc      Forgot password
@@ -163,6 +168,7 @@ const forgotPassword = ansyncHandler (async (req, res, next) => {
 // @desc      Reset password
 // @route     PUT /api/v1/auth/resetpassword/:resettoken
 // @access    Public
+
 const resetPassword = ansyncHandler(async (req, res, next) => {
     // Get hashed token
     const resetPassordToken = crypto

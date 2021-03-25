@@ -18,9 +18,9 @@ const advancedResult=(model,populate)=> async(req,res,next)=>{
         queryString=queryString.replace(/\b(gt|gte|lt|lte|in)\b/g,match => `$${match}`)
         /** */
         // @decr then we get back to the json format and use it to query in database
-    //  @desc  this is the oroginal query http://localhost/v1/models? which one we distract to get subqueries
-      query=model.find(JSON.parse(queryString))
-      
+      //  @desc  this is the oroginal query http://localhost/v1/models? which one we distract to get subqueries
+        query=model.find(JSON.parse(queryString))
+        
       
     
     //   @desc here is the case when the original query has
